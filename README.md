@@ -92,11 +92,11 @@ MovieSheet特点:
 		var npc1:MoiveClip = new MovieSheet(npcMc1);
 		addChild(npc1);
 		
-		var npcMc2:MoiveClip = new NpcAsset();
+		var npcMc2:MoiveClip = new MovieClip();
 		npcMc2.name = "npc";
 		var npc2:MoiveClip = new MovieSheet(npcMc2);
 		addChild(npc2);
-		//但这样使用会造成npc2无法正常使用scale参数
+		//但这样使用会造成npc2无法正常使用scale参数(因为使用的是一个空MC)
 		//如果想正常使用scale进行缩放，
 		//请在MovieSheet实例化时传入真实的NpcAsset实例
 ```
@@ -104,13 +104,17 @@ MovieSheet特点:
 FAQ:
 ----------------
 **使用MovieClip作为基类性能是否有影响?**
+
 经测试，同屏1800个对象可维持24帧的速率
 
 **缩放后有锯齿怎么办?**
+
 请使用MovieSheet.scale参数进行缩放
 
 **为什么使用scale进行缩放，而不是scaleX和scaleY?**
+
 为兼容旧项目考虑，某些旧项目会使用负数的scaleX和scaleY进行镜像
 
 **为什么不使用Worker进行进一步性能优化?**
+
 考虑到手机程序不支持多线程，所以未实现，但不排队以后实现的可能
