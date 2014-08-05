@@ -25,24 +25,27 @@ package com.framework.movieclipbitmap.display
 
 		override protected function proceedParsing():Boolean
 		{
-			for (var i:uint=1; i<=sourceMc.totalFrames; i++)
-			{
-				sourceMc.gotoAndStop(i);
-				if (sourceMc.currentFrameLabel)
-				{
-					currentLabels[sourceMc.currentFrameLabel] = i;
-				}
-			}
-
-			if (!globalMcLib[getCurrentMcName(0)])
-			{
-				_currentMc = new MovieClipSub(objParser.renderToTextures(sourceMc, true), _fps);
-				_currentMc.name = sourceMc.name+"|tween";
-				_currentMc.isSwfMC = true;
-				globalMcLib[getCurrentMcName(0)] = _currentMc;
-			}
-
-			return true;
+            for (var i:uint=1; i<=sourceMc.totalFrames; i++)
+            {
+                sourceMc.gotoAndStop(i);
+                if (sourceMc.currentFrameLabel)
+                {
+                    currentLabels[sourceMc.currentFrameLabel] = i;
+                }
+            }
+            var libMc:MovieClipSub = globalMcLib[getCurrentMcName(0)];
+            if (!libMc)
+            {
+                _currentMc = new MovieClipSub(objParser.renderToTextures(sourceMc, true), _fps);
+                _currentMc.name = sourceMc.name+"|tween";
+                _currentMc.isSwfMC = true;
+                globalMcLib[getCurrentMcName(0)] = _currentMc;
+            }
+            else
+            {
+                _currentMc = libMc.clone();
+            }
+            return true;
 		}
 
 		override protected function gotoFrame(frame : Object):void
