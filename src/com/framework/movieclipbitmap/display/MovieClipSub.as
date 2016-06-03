@@ -280,9 +280,12 @@ package com.framework.movieclipbitmap.display
 		{
 			if (_playing == false)
 				return;
-			
 			if(_loop == false && _currentFrame == _totalFrame)
-				return;
+            {
+                stop();
+                return;
+            }
+				
 			// 如果是循环状态,并且当前帧为最后一帧
 			if(_loop && _currentFrame == _totalFrame)
 				_currentFrame = 0;

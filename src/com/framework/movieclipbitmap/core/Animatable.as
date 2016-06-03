@@ -1,15 +1,15 @@
 package com.framework.movieclipbitmap.core
 {
+	import com.framework.movieclipbitmap.display.MovieClipSub;
 	import com.framework.movieclipbitmap.texture.Texture;
 	import com.framework.movieclipbitmap.utils.DisplayObjectParser;
-
+	
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.utils.Timer;
-	import com.framework.movieclipbitmap.display.MovieClipSub;
 
 	/**
 	 *
@@ -62,6 +62,8 @@ package com.framework.movieclipbitmap.core
 				scale = sourceMc.scaleX;
 			}
 		}
+        
+        protected var needAutoPlay:Boolean;
 
         /**
          * 供位图未生成前调用
@@ -225,9 +227,14 @@ package com.framework.movieclipbitmap.core
 			return _currentMc.loop;
 		}
 
-		public function set loop(loop : Boolean) : void
+        protected var needLoop:Boolean;
+		public function set loop(value : Boolean) : void
 		{
-			_currentMc.loop = loop
+            if (_currentMc != null)
+            {
+			    _currentMc.loop = value;
+            }
+            needLoop = value;
 		}
 
 		protected function getCurrentMcName(mcIndex:int):String
@@ -237,7 +244,14 @@ package com.framework.movieclipbitmap.core
 
 		override public function play() : void
 		{
-			_currentMc.play();
+            if (_parsingComplete)
+            {
+			    _currentMc.play();
+            }
+            else
+            {
+                this.needAutoPlay = true;
+            }
 		}
 
 		override public function stop() : void
@@ -416,6 +430,8 @@ package com.framework.movieclipbitmap.core
 			}
 			_parsingComplete = true;
 			dispatchEvent(new Event(Event.COMPLETE));
+            
+            _currentMc.loop = needLoop;
 		}
 
 		protected function proceedParsing():Boolean
@@ -459,7 +475,6 @@ package com.framework.movieclipbitmap.core
 		{
 			event.stopImmediatePropagation();
 			setMouseIn(!isPointTransparent(_currentMc.mouseX, _currentMc.mouseY));
-
 		}
 
 		private function testMouseEvent(event:MouseEvent):void
