@@ -57,6 +57,7 @@ public dynamic class MovieTween extends Animatable
     {
         if (frame is String)
         {
+            _currentLabel = String(frame);
             frame = _currentLabels[frame];
         }
         _currentFrame = int(frame);
@@ -67,10 +68,11 @@ public dynamic class MovieTween extends Animatable
     {
         if (frame is String)
         {
+            _currentLabel = String(frame);
             frame = _currentLabels[frame];
         }
         _currentFrame = int(frame);
-        _currentMc.gotoAndPlay(_currentFrame)
+        _currentMc.gotoAndPlay(_currentFrame);
     }
     override protected function finishParsing():void
     {

@@ -32,7 +32,6 @@ public class DisplayObjectParser
      */		
     public function renderToTextures(mc:MovieClip, isTween:Boolean = false) : Vector.<Texture>
     {
-        
         if(mc == null)
             throw new Error('MovieClip is null');
         
@@ -51,11 +50,11 @@ public class DisplayObjectParser
         while(i < total)
         {
             textures[i] = renderToTexture(mc, true, 0x000000);
+            i++;
             if (total > 1)
             {
-                mc.nextFrame();
+                mc.gotoAndStop(i+1);
             }
-            i++;
         }
         return textures;
     }
