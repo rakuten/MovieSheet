@@ -1,6 +1,5 @@
 package com.framework.movieclipbitmap.display
 {
-	import com.framework.movieclipbitmap.core.IAnimatable;
 	import com.framework.movieclipbitmap.texture.Texture;
 	
 	
@@ -14,7 +13,7 @@ package com.framework.movieclipbitmap.display
 	 * ----------------------------------------
 	 * @author Neil
 	 */
-	public class MovieClipSub extends Image implements IAnimatable
+	public class MovieClipSub extends Image
 	{
 		/** 序列图 */
 		private var _textures : Vector.<Texture>;
@@ -216,7 +215,6 @@ package com.framework.movieclipbitmap.display
 //				this.height = texture.height;
 			}
 			this.bitmapData = texture.bitmapData;
-			
 		}
 
 		/**
@@ -276,7 +274,7 @@ package com.framework.movieclipbitmap.display
 		 * 这个动画的正确帧呢？
 		 * @param passedTime					passedtime
 		 */		
-		override public function advanceTime(passedTime : Number) : void
+		public function advanceTime(passedTime : Number) : void
 		{
 			if (_playing == false)
 				return;

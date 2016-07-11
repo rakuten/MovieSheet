@@ -22,7 +22,7 @@ import flash.utils.Timer;
  */
 public class Animatable extends MovieClip implements IAnimatable
 {
-    static public const VER:String = "1.1";
+    static public const VER:String = "1.2";
     /**
      * 分帧绘制bmd的间隔(单位:ms)
      */
@@ -44,7 +44,7 @@ public class Animatable extends MovieClip implements IAnimatable
                                                 MouseEvent.MOUSE_DOWN,
                                                 MouseEvent.MOUSE_MOVE,
                                                 MouseEvent.MOUSE_UP];
-    
+
     /**
      *
      * @param sourceMc
@@ -55,7 +55,7 @@ public class Animatable extends MovieClip implements IAnimatable
     public function Animatable(sourceMc:MovieClip, autoDraw:Boolean = true, fps : int = 30)
     {
         this.mouseChildren = false;
-        this.name = sourceMc.name;
+//        this.name = sourceMc.name;
         this.resourceName = sourceMc.name;
         this.sourceMc = sourceMc;
         this._fps = fps;
@@ -68,8 +68,12 @@ public class Animatable extends MovieClip implements IAnimatable
         for each (var i:FrameLabel in sourceMc.currentLabels)
         {
             this._currentLabels[i.name] = i.frame;
+            this._labelIndexLab[i.frame] = i.name;
         }
+        _currentLabel = _labelIndexLab[1];
     }
+    
+    private var _labelIndexLab:Object = {};
     
     protected var needAutoPlay:Boolean;
     
@@ -99,12 +103,16 @@ public class Animatable extends MovieClip implements IAnimatable
         return _currentLabel;
     }
     
+    protected var _currentFrameLabel:String;
+    override public function get currentFrameLabel():String
+    {
+        return _currentFrameLabel;
+    }
     
     /**
      * 帧标签容器
      */
     protected var _currentLabels:Object = {};
-    
     
     private var resourceName:String;
     
@@ -229,10 +237,10 @@ public class Animatable extends MovieClip implements IAnimatable
         return _totalFrames;
     }
     
-    protected var _currentFrame:int = 0;
+//    protected var _currentFrame:int = 0;
     override public function get currentFrame():int
     {
-        return _currentFrame;
+        return _currentMc.currentFrame;
     }
     
     protected var _fps:int = 30;
@@ -288,20 +296,20 @@ public class Animatable extends MovieClip implements IAnimatable
     
     override public function nextFrame():void
     {
-        var value:uint = _currentFrame;
-        if (_currentFrame < _totalFrames)
+        var value:uint = currentFrame;
+        if (currentFrame < _totalFrames)
         {
-            value = _currentFrame + 1;
+            value = currentFrame + 1;
             gotoAndStop(value);
         }
     }
     
     override public function prevFrame():void
     {
-        var value:uint = _currentFrame;
-        if (_currentFrame != 1 && _currentFrame < _totalFrames)
+        var value:uint = currentFrame;
+        if (currentFrame != 1 && currentFrame < _totalFrames)
         {
-            value = _currentFrame - 1;
+            value = currentFrame - 1;
             gotoAndStop(value);
         }
     }
@@ -319,16 +327,6 @@ public class Animatable extends MovieClip implements IAnimatable
         {
             return super.hitTestPoint(x, y, shapeFlag);
         }
-    }
-    
-    override public function gotoAndStop(frame : Object, scene:String=null) : void
-    {
-        gotoFrame(frame)
-    }
-    
-    override public function gotoAndPlay(frame : Object, scene:String=null) : void
-    {
-        gotoFrame(frame)
     }
     
     public function dispose():void
@@ -375,36 +373,6 @@ public class Animatable extends MovieClip implements IAnimatable
     private function isPointTransparent(x:int, y:int):Boolean
     {
         return (_currentMc.bitmapData.getPixel32(x, y) >> 24 & 0xff) < _alphaThreshold;
-    }
-    
-    protected function gotoFrame(frame : Object):void
-    {
-        if (frame is String)
-        {
-            _currentLabel = String(frame);
-            frame = _currentLabels[frame];
-        }
-        
-        if (_currentMc)
-        {
-            Juggler.getInstance().remove(_currentMc);
-//				_currentMc.stop();
-            removeChild(_currentMc);
-            _currentMc.clear();
-            _currentMc = null;
-        }
-        _currentFrame = int(frame);
-        var tmpMc:MovieClipSub = globalMcLib[getCurrentMcName(_currentFrame)];
-        if (tmpMc)
-        {
-            _currentMc = tmpMc.clone();
-            _currentMc.play();
-            addChild(_currentMc);
-            if (_currentMc.numChildren > 0)
-            {
-                Juggler.getInstance().add(_currentMc);
-            }
-        }
     }
     
     public function parser():void
@@ -467,14 +435,45 @@ public class Animatable extends MovieClip implements IAnimatable
         return false;
     }
     
-    public function advanceTime(time:Number):void
+    public function enterFrame(time:Number):void
     {
-        if (_currentFrame >= 0)
+        if (currentFrame >= 0)
             _currentMc.advanceTime(time);
+        
+        frameScript();
+        changeFrameLabel();
+    }
+    
+    /**
+     * 主要为了切换帧标签,请不要手工调用 
+     */    
+    protected function changeFrameLabel():void
+    {
+        var frameName:String = _labelIndexLab[currentFrame];
+        this._currentLabel = frameName ? frameName : this._currentLabel; 
+        this._currentFrameLabel = frameName ? frameName : ""; 
+    }
+    
+    /**
+     * 提供子类写帧代码的专用方法
+     */    
+    protected function frameScript():void
+    {
+        //比如
+//        if (currentLabel=="poss1" && currentFrame>=20)
+//        {
+//            gotoAndPlay(1);
+//        }
+        
+        //又比如
+//        if (_currentFrameLabel == "end2")
+//        {
+//            gotoAndPlay("poss3");
+//        }
     }
     
     private var _mouseIn:Boolean;
-    
+
     public function setMouseIn(value:Boolean):void
     {
         

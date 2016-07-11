@@ -1,5 +1,7 @@
 package com.framework.movieclipbitmap.core
 {
+import flash.display.DisplayObjectContainer;
+
 	/**
 	 * 动画接口 
 	 * @author Neil
@@ -11,6 +13,8 @@ package com.framework.movieclipbitmap.core
 		 * @param time
 		 * 
 		 */		
-		function advanceTime(time:Number) : void;
+		function enterFrame(time:Number) : void;
+        
+        function get parent():DisplayObjectContainer
 	}
 }

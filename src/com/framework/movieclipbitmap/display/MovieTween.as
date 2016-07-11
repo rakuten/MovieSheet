@@ -48,11 +48,6 @@ public dynamic class MovieTween extends Animatable
         return true;
     }
     
-    override protected function gotoFrame(frame : Object):void
-    {
-        //不作任何处理，override是为了防止可能的意外
-    }
-    
     override public function gotoAndStop(frame : Object, scene:String=null) : void
     {
         if (frame is String)
@@ -60,8 +55,7 @@ public dynamic class MovieTween extends Animatable
             _currentLabel = String(frame);
             frame = _currentLabels[frame];
         }
-        _currentFrame = int(frame);
-        _currentMc.gotoAndStop(_currentFrame)
+        _currentMc.gotoAndStop(int(frame))
     }
     
     override public function gotoAndPlay(frame : Object, scene:String=null) : void
@@ -71,13 +65,12 @@ public dynamic class MovieTween extends Animatable
             _currentLabel = String(frame);
             frame = _currentLabels[frame];
         }
-        _currentFrame = int(frame);
-        _currentMc.gotoAndPlay(_currentFrame);
+        _currentMc.gotoAndPlay(int(frame));
     }
     override protected function finishParsing():void
     {
         super.finishParsing();
-        Juggler.getInstance().add(_currentMc);
+        Juggler.getInstance().add(this);
         addChild(_currentMc);
         
         if (needAutoPlay)

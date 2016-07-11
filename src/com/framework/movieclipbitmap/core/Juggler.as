@@ -102,14 +102,14 @@ public class Juggler
         for (i = 0; i < numObjects; i++)
         {
             var animator : IAnimatable = iAnimatableObjects[i];
-            if (animator != null)
+            if (animator != null && animator.parent != null)
             {
                 if (currentIndex != i)
                 {
                     iAnimatableObjects[currentIndex] = animator;
                     iAnimatableObjects[i] = null;
                 }
-                animator.advanceTime(passedTime);
+                animator.enterFrame(passedTime);
                 currentIndex++;
             }
         }

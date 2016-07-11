@@ -1,8 +1,10 @@
 package com.framework.movieclipbitmap.display
 {
+import com.framework.movieclipbitmap.core.Animatable;
+import com.framework.movieclipbitmap.core.Juggler;
+
 import flash.display.DisplayObject;
 import flash.display.MovieClip;
-import com.framework.movieclipbitmap.core.Animatable;
 
 /**
  * MC序列动画，支持多帧多层子MovieClip对象，
@@ -21,6 +23,52 @@ public dynamic class MovieSheet extends Animatable
     public function MovieSheet(sourceMc:MovieClip, autoDraw:Boolean = true, fps : int = 30)
     {
         super(sourceMc, autoDraw, fps);
+    }
+
+    override public function gotoAndStop(frame : Object, scene:String=null) : void
+    {
+        gotoFrame(frame)
+    }
+    
+    override public function gotoAndPlay(frame : Object, scene:String=null) : void
+    {
+        gotoFrame(frame)
+    }
+    
+    protected var _currentFrame:int = 0;
+    override public function get currentFrame():int
+    {
+        return _currentFrame;
+    }
+    
+    protected function gotoFrame(frame : Object):void
+    {
+        if (frame is String)
+        {
+            _currentLabel = String(frame);
+            frame = _currentLabels[frame];
+        }
+        if (_currentMc)
+        {
+            Juggler.getInstance().remove(this);
+            //				_currentMc.stop();
+            removeChild(_currentMc);
+            _currentMc.clear();
+            _currentMc = null;
+        }
+        
+        _currentFrame = int(frame);
+        var tmpMc:MovieClipSub = globalMcLib[getCurrentMcName(int(frame))];
+        if (tmpMc)
+        {
+            _currentMc = tmpMc.clone();
+            _currentMc.play();
+            addChild(_currentMc);
+            if (_currentMc.numChildren > 0)
+            {
+                Juggler.getInstance().add(this);
+            }
+        }
     }
     
     override protected function proceedParsing():Boolean
