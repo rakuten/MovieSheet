@@ -61,7 +61,8 @@ public class Juggler
             return;
         var index : int = iAnimatableObjects.indexOf(animator);
         if (index != -1)
-            iAnimatableObjects[index] = null;
+            iAnimatableObjects.splice(index, 1);
+//            iAnimatableObjects[index] = null;
     }
     
     public function start() : void
